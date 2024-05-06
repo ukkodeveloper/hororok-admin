@@ -31,11 +31,17 @@ import {
 
 import {
   Command,
+  CommandEmpty,
+  CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import ky from 'ky';
+import { headers } from 'next/headers';
+import Provider from '@/app/provider';
+import { useGetCafeListQuery } from '@/app/_queries/useGetCafeListQuery';
 
 const addingCafeSchema = z.object({
   cafe: z.string({
@@ -55,18 +61,6 @@ const addingCafeSchema = z.object({
   photos: z.array(z.string()).optional(),
 });
 
-const languages = [
-  { label: 'English', value: 'en' },
-  { label: 'French', value: 'fr' },
-  { label: 'German', value: 'de' },
-  { label: 'Spanish', value: 'es' },
-  { label: 'Portuguese', value: 'pt' },
-  { label: 'Russian', value: 'ru' },
-  { label: 'Japanese', value: 'ja' },
-  { label: 'Korean', value: 'ko' },
-  { label: 'Chinese', value: 'zh' },
-] as const;
-
 type ProfileFormValues = z.infer<typeof addingCafeSchema>;
 
 // This can come from your database or API.
@@ -78,17 +72,15 @@ export default function Home() {
     defaultValues,
     mode: 'onChange',
   });
-  const [searchingWords, setSearchingWords] = useState();
-  const [cafes, setCafes] = useState<{ label: string; value: string }[]>([]);
 
-  useEffect(() => {
-    if (searchingWords) {
-      // 예를 들어 API 호출을 통해 좌표와 주소를 가져옵니다.
-      fetch(`api/coordinates/${searchingWords}`)
-        .then(response => response.json())
-        .then(data => {});
-    }
-  }, [searchingWords]);
+  const {
+    cafeQuery: { data: cafeList },
+    cafeOptions,
+    keyword,
+    setKeyword,
+    cafeSelected,
+    selectCafe,
+  } = useGetCafeListQuery();
 
   function onSubmit(data: ProfileFormValues) {
     toast({
@@ -103,6 +95,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col max-w-screen-sm m-auto p-24">
+      <Button onClick={async () => {}}>데이터 스윽</Button>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -112,7 +105,7 @@ export default function Home() {
             control={form.control}
             name="cafe"
             render={({ field }) => (
-              <FormItem className="w-[350px] flex flex-col">
+              <FormItem className="w-full flex flex-col">
                 <FormLabel>카페명 (필수)</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -125,36 +118,36 @@ export default function Home() {
                           !field.value && 'text-muted-foreground'
                         )}
                       >
-                        {field.value
-                          ? languages.find(
-                              language => language.value === field.value
-                            )?.label
-                          : 'Select language'}
-                        <SearchIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        {cafeSelected?.title.replace(/<[^>]*>/g, '')}
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[350px] p-0">
+                  <PopoverContent className="w-[448px] p-0">
                     <Command>
-                      <CommandInput placeholder="Type a command or search..." />
+                      <CommandInput
+                        placeholder="카페 이름을 검색하세요."
+                        onValueChange={keyword => setKeyword(keyword)}
+                        value={keyword}
+                      />
                       <CommandList>
-                        {languages.map(language => (
+                        <CommandEmpty>찾는 결과가 없습니다.</CommandEmpty>
+                        {cafeOptions?.map(({ label, value }) => (
                           <CommandItem
-                            value={language.label}
-                            key={language.value}
+                            value={label}
+                            key={value}
                             onSelect={() => {
-                              form.setValue('language', language.value);
+                              selectCafe(value);
                             }}
                           >
                             <Check
                               className={cn(
                                 'mr-2 h-4 w-4',
-                                language.value === field.value
+                                value === field.value
                                   ? 'opacity-100'
                                   : 'opacity-0'
                               )}
                             />
-                            {language.label}
+                            {label}
                           </CommandItem>
                         ))}
                       </CommandList>
@@ -168,12 +161,12 @@ export default function Home() {
 
           <FormField
             control={form.control}
-            name="username"
+            name="phone"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>전화번호(옵션)</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input placeholder="02-" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -182,7 +175,7 @@ export default function Home() {
 
           <FormField
             control={form.control}
-            name="bio"
+            name="photos"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>카페 사진 (필수)</FormLabel>
