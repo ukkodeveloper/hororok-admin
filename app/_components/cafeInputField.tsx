@@ -50,7 +50,7 @@ export default function CafeInputField() {
                 </Button>
               </FormControl>
             </PopoverTrigger>
-            <PopoverContent className="w-[448px] p-0">
+            <PopoverContent className="w-[382px] p-0">
               <Command>
                 <CommandInput
                   placeholder="카페 이름을 검색하세요."

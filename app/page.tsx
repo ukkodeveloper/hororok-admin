@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import CafeInputField from '@/app/_components/cafeInputField';
 import TelephoneField from '@/app/_components/telephoneField';
 import ImageField from '@/app/_components/imageField';
+import ky from 'ky';
 
 const cafeSchema = z.object({
   cafe: z.string({
@@ -23,10 +24,7 @@ const cafeSchema = z.object({
   address: z.string({
     required_error: '주소는 필수입니다.',
   }),
-  telephone: z
-    .string()
-    .regex(/^(\d{2,3}-\d{3,4}-\d{4})$/, '전화번호 형식이 올바르지 않습니다.')
-    .optional(),
+  telephone: z.string().optional(),
   images: z
     .array(z.instanceof(File))
     .min(1, '최소 1개의 이미지가 필요합니다.')
@@ -37,22 +35,56 @@ export type CafeSchema = z.infer<typeof cafeSchema>;
 
 const defaultValues: Partial<CafeSchema> = {
   images: [],
+  telephone: '',
 };
 
 export default function Home() {
   const form = useForm<CafeSchema>({
+    mode: 'onSubmit',
     resolver: zodResolver(cafeSchema),
     defaultValues,
-    mode: 'onSubmit',
   });
 
-  function onSubmit(data: CafeSchema) {
-    console.log(data);
+  async function onSubmit(data: CafeSchema) {
+    const formData = new FormData();
+
+    formData.append(
+      'request',
+      JSON.stringify({
+        name: data.cafe,
+        roadAddress: data.address,
+        mapx: Number(data.coordinates[0]),
+        mapy: Number(data.coordinates[1]),
+        telephone: data.telephone,
+      })
+    );
+
+    formData.append('mainImage', data.images[0]);
+
+    if (data.images.length > 1) {
+      data.images.slice(1).forEach(image => {
+        formData.append('otherImages', image);
+      });
+    }
+
+    const response = await ky
+      .post('https://api.hororok.o-r.kr/api/admin/cafe/save', {
+        body: formData,
+        headers: {
+          accept: 'application/json',
+        },
+      })
+      .json();
+
+    form.reset();
+
     toast({
       title: '값이 등록되었습니다.',
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          <code className="text-white">
+            {JSON.stringify(response, null, 2)}
+          </code>
         </pre>
       ),
     });
