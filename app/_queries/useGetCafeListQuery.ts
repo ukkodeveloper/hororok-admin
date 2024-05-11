@@ -37,7 +37,7 @@ export const useGetCafeListQuery = () => {
     return {
       title: cafe.title,
       coordinates: [cafe.mapx, cafe.mapy],
-      address: cafe.address,
+      address: cafe.roadAddress,
       telephone: cafe.telephone,
     };
   };

@@ -35,7 +35,6 @@ const cafeSchema = z.object({
 
 export type CafeSchema = z.infer<typeof cafeSchema>;
 
-// This can come from your database or API.
 const defaultValues: Partial<CafeSchema> = {
   images: [],
 };
@@ -48,6 +47,7 @@ export default function Home() {
   });
 
   function onSubmit(data: CafeSchema) {
+    console.log(data);
     toast({
       title: '값이 등록되었습니다.',
       description: (
@@ -59,11 +59,11 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-col min-w-[640px] max-w-screen-sm m-auto p-24">
+    <main className="flex flex-col min-w-[640px] max-w-screen-sm m-auto p-24 ">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 grid-cols-3"
+          className="space-y-8 grid-cols-3 bg-gray-50 px-8 py-10 rounded-md"
         >
           <CafeInputField />
           <TelephoneField />
