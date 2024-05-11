@@ -13,6 +13,7 @@ import CafeInputField from '@/app/_components/cafeInputField';
 import TelephoneField from '@/app/_components/telephoneField';
 import ImageField from '@/app/_components/imageField';
 import ky from 'ky';
+import { compress } from '@/app/_utils/compress';
 
 const cafeSchema = z.object({
   cafe: z.string({
@@ -24,7 +25,12 @@ const cafeSchema = z.object({
   address: z.string({
     required_error: '주소는 필수입니다.',
   }),
-  telephone: z.string().optional(),
+  telephone: z
+    .string()
+    .regex(
+      /^(\s*|\d{2,3}-\d{3,4}-\d{4})$/,
+      '전화번호 형식에 맞춰주세요.(- 붙여주세요.)'
+    ),
   images: z
     .array(z.instanceof(File))
     .min(1, '최소 1개의 이미지가 필요합니다.')
@@ -46,6 +52,10 @@ export default function Home() {
   });
 
   async function onSubmit(data: CafeSchema) {
+    // compression
+    const imageFiles = await compress(data.images);
+
+    // formData
     const formData = new FormData();
 
     formData.append(
@@ -59,35 +69,49 @@ export default function Home() {
       })
     );
 
-    formData.append('mainImage', data.images[0]);
+    formData.append('mainImage', imageFiles[0]);
 
-    if (data.images.length > 1) {
-      data.images.slice(1).forEach(image => {
+    if (imageFiles.length > 1) {
+      imageFiles.slice(1).forEach(image => {
         formData.append('otherImages', image);
       });
     }
 
-    const response = await ky
-      .post('https://api.hororok.o-r.kr/api/admin/cafe/save', {
-        body: formData,
-        headers: {
-          accept: 'application/json',
-        },
-      })
-      .json();
+    // api call
+    try {
+      const response = await ky
+        .post('https://api.hororok.o-r.kr/api/admin/cafe/save', {
+          body: formData,
+          headers: {
+            accept: 'application/json',
+          },
+        })
+        .json();
 
-    form.reset();
+      toast({
+        title: '값이 등록되었습니다.',
+        description: (
+          <pre className="mt-2 w-full rounded-md bg-slate-950 p-4">
+            <code className="text-white">
+              {JSON.stringify(response, null, 2)}
+            </code>
+          </pre>
+        ),
+      });
 
-    toast({
-      title: '값이 등록되었습니다.',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">
-            {JSON.stringify(response, null, 2)}
-          </code>
-        </pre>
-      ),
-    });
+      form.reset();
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          title: '통신에 실패했어요.',
+          description: <p>{error?.message}</p>,
+        });
+      } else {
+        toast({
+          title: '알수 없는 에러',
+        });
+      }
+    }
   }
 
   return (
