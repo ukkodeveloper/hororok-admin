@@ -28,8 +28,8 @@ export const getCafeListSearched = (keyword: string) => {
         display: 5,
       },
       headers: {
-        'X-Naver-Client-Id': process.env['NEXT_PUBLIC_X-NAVER-ID'],
-        'X-Naver-Client-Secret': process.env['NEXT_PUBLIC_X-NAVER-SECRET'],
+        'X-Naver-Client-Id': process.env['NEXT_PUBLIC_X_NAVER_ID'],
+        'X-Naver-Client-Secret': process.env['NEXT_PUBLIC_X_NAVER_SECRET'],
       },
     })
     .then(response => response.json<CafeListResponse>());
