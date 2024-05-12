@@ -38,9 +38,11 @@ const cafeSchema = z.object({
     .max(3, '최대 3개의 이미지까지 가능합니다.'),
   menu: z.array(
     z.object({
-      name: z.string(),
+      name: z.string({
+        required_error: '메뉴 이름은 필수입니다.',
+      }),
       price: z.number(),
-      image: z.string().optional(), // base64 인코딩된 이미지 문자열
+      image: z.string(),
     })
   ),
 });
@@ -75,6 +77,7 @@ export default function Home() {
         mapx: Number(data.coordinates[0]),
         mapy: Number(data.coordinates[1]),
         telephone: data.telephone,
+        menu: data.menu.filter(m => m.name.length > 0 && m.price > 0),
       })
     );
 
@@ -89,7 +92,7 @@ export default function Home() {
     // api call
     try {
       const response = await ky
-        .post('https://api.hororok.o-r.kr/api/admin/cafe/save', {
+        .post('https://api.cafe-cok.p-e.kr/api/admin/cafe/save', {
           body: formData,
           headers: {
             accept: 'application/json',
@@ -132,11 +135,10 @@ export default function Home() {
         >
           <CafeInputField />
           <ImageField />
-
           <MenuField />
           <TelephoneField />
 
-          <Button className="w-full" type="submit" size="lg">
+          <Button className="w-full text-md h-14" type="submit" size="lg">
             등록하기
           </Button>
         </form>

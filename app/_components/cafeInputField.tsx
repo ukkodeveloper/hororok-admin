@@ -63,7 +63,7 @@ export default function CafeInputField() {
                   {cafeOptions?.map(({ label, value }) => (
                     <CommandItem
                       value={label}
-                      key={value}
+                      key={label}
                       onSelect={() => {
                         const meta = getCafeMeta(value);
                         if (!meta) return;
