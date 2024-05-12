@@ -17,7 +17,7 @@ export default function TelephoneField() {
       control={form.control}
       name="telephone"
       render={({ field }) => (
-        <FormItem>
+        <FormItem className="w-[380px]">
           <FormLabel>전화번호(옵션)</FormLabel>
           <FormControl>
             <Input placeholder="02-" {...field} />

@@ -14,6 +14,7 @@ import TelephoneField from '@/app/_components/telephoneField';
 import ImageField from '@/app/_components/imageField';
 import ky from 'ky';
 import { compress } from '@/app/_utils/compress';
+import MenuField from '@/app/_components/menuField';
 
 const cafeSchema = z.object({
   cafe: z.string({
@@ -35,6 +36,13 @@ const cafeSchema = z.object({
     .array(z.instanceof(File))
     .min(1, '최소 1개의 이미지가 필요합니다.')
     .max(3, '최대 3개의 이미지까지 가능합니다.'),
+  menu: z.array(
+    z.object({
+      name: z.string(),
+      price: z.number(),
+      image: z.string().optional(), // base64 인코딩된 이미지 문자열
+    })
+  ),
 });
 
 export type CafeSchema = z.infer<typeof cafeSchema>;
@@ -42,6 +50,7 @@ export type CafeSchema = z.infer<typeof cafeSchema>;
 const defaultValues: Partial<CafeSchema> = {
   images: [],
   telephone: '',
+  menu: [],
 };
 
 export default function Home() {
@@ -115,20 +124,23 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-col min-w-[640px] max-w-screen-sm m-auto p-24 ">
+    <div className="flex flex-col min-w-[768px] max-w-screen-md m-auto p-24 ">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 grid-cols-3 bg-gray-50 px-8 py-10 rounded-md"
+          className="space-y-8 grid-cols-3 px-8 py-10 rounded-md"
         >
           <CafeInputField />
-          <TelephoneField />
           <ImageField />
-          <div className="flex justify-end">
-            <Button type="submit">등록하기</Button>
-          </div>
+
+          <MenuField />
+          <TelephoneField />
+
+          <Button className="w-full" type="submit" size="lg">
+            등록하기
+          </Button>
         </form>
       </Form>
-    </main>
+    </div>
   );
 }

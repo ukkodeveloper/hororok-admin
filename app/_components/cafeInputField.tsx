@@ -33,7 +33,7 @@ export default function CafeInputField() {
       control={form.control}
       name="cafe"
       render={({ field, formState }) => (
-        <FormItem className="w-full flex flex-col">
+        <FormItem className="w-[380px] flex flex-col">
           <FormLabel>카페명 (필수)</FormLabel>
           <Popover>
             <PopoverTrigger asChild>
