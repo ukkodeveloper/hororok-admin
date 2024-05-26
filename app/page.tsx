@@ -63,10 +63,7 @@ export default function Home() {
   });
 
   async function onSubmit(data: CafeSchema) {
-    // compression
     const imageFiles = await compress(data.images);
-
-    // formData
     const formData = new FormData();
 
     formData.append(
@@ -77,7 +74,7 @@ export default function Home() {
         mapx: Number(data.coordinates[0]),
         mapy: Number(data.coordinates[1]),
         telephone: data.telephone,
-        menu: data.menu.filter(m => m.name.length > 0 && m.price > 0),
+        menus: data.menu.filter(m => m.name.length > 0 && m.price > 0),
       })
     );
 

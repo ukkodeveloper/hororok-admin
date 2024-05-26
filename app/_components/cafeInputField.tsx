@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
   Command,
+  CommandDialog,
   CommandEmpty,
   CommandInput,
   CommandItem,
@@ -23,11 +24,14 @@ import { Check } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { useGetCafeListQuery } from '@/app/_queries/useGetCafeListQuery';
 import type { CafeSchema } from '@/app/page';
+import { useState } from 'react';
 
 export default function CafeInputField() {
   const form = useFormContext<CafeSchema>();
   const { cafeOptions, keyword, setKeyword, getCafeMeta } =
     useGetCafeListQuery();
+
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <FormField
       control={form.control}
