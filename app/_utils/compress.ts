@@ -3,7 +3,7 @@ import { adjustFileExtension } from '@/app/_utils/adjsutFileExtension';
 
 const options = {
   maxSizeMB: 0.8,
-  maxWidthOrHeight: 1920,
+  maxWidthOrHeight: 1280,
   fileType: 'image/png',
 };
 

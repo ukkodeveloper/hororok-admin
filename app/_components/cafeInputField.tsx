@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
   Command,
-  CommandDialog,
   CommandEmpty,
   CommandInput,
   CommandItem,
@@ -31,7 +30,7 @@ export default function CafeInputField() {
   const { cafeOptions, keyword, setKeyword, getCafeMeta } =
     useGetCafeListQuery();
 
-  const [isOpen, setIsOpen] = useState(false);
+  // const [isOpen, setIsOpen] = useState(false);
   return (
     <FormField
       control={form.control}

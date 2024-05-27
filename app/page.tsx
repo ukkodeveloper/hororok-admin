@@ -15,6 +15,7 @@ import ImageField from '@/app/_components/imageField';
 import ky from 'ky';
 import { compress } from '@/app/_utils/compress';
 import MenuField from '@/app/_components/menuField';
+import HoursField from '@/app/_components/hoursField';
 
 const cafeSchema = z.object({
   cafe: z.string({
@@ -45,6 +46,7 @@ const cafeSchema = z.object({
       image: z.string(),
     })
   ),
+  hours: z.array(z.array(z.string())),
 });
 
 export type CafeSchema = z.infer<typeof cafeSchema>;
@@ -53,6 +55,15 @@ const defaultValues: Partial<CafeSchema> = {
   images: [],
   telephone: '',
   menu: [],
+  hours: [
+    ['', ''],
+    ['', ''],
+    ['', ''],
+    ['', ''],
+    ['', ''],
+    ['', ''],
+    ['', ''],
+  ],
 };
 
 export default function Home() {
@@ -66,6 +77,8 @@ export default function Home() {
     const imageFiles = await compress(data.images);
     const formData = new FormData();
 
+    console.log('[data.caf]', data.cafe);
+
     formData.append(
       'request',
       JSON.stringify({
@@ -75,6 +88,7 @@ export default function Home() {
         mapy: Number(data.coordinates[1]),
         telephone: data.telephone,
         menus: data.menu.filter(m => m.name.length > 0 && m.price > 0),
+        hours: data.hours,
       })
     );
 
@@ -134,6 +148,7 @@ export default function Home() {
           <ImageField />
           <MenuField />
           <TelephoneField />
+          <HoursField />
 
           <Button className="w-full text-md h-14" type="submit" size="lg">
             등록하기
