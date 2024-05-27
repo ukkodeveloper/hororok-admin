@@ -44,7 +44,7 @@ export default function ImageField() {
       render={({ field }) => {
         return (
           <FormItem>
-            <FormLabel>카페 사진 (필수)</FormLabel>
+            <FormLabel>카페 정보 (필수)</FormLabel>
             <FormControl>
               <div className="grid gap-2 max-w-xs">
                 <Image

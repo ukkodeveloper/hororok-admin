@@ -38,7 +38,7 @@ export default function HoursField() {
       name="hours"
       render={({ field: { value, onChange } }) => (
         <FormItem>
-          <FormLabel>영업 시간</FormLabel>
+          <FormLabel>영업 시간 (옵션)</FormLabel>
           <div className="space-y-6 p-4 bg-zinc-100 rounded-md">
             <div className="flex w-full gap-2 ">
               {Object.entries(daysChecked).map(([day, checked], index) => (

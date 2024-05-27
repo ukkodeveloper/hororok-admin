@@ -83,7 +83,7 @@ export default function MenuField() {
             <TableCell colSpan={2}>
               <p className="text-gray-600 flex gap-2 items-center">
                 <AlertCircle />
-                메뉴 이름과 가격을 적지 않으면 등록이 되지 않습니다.
+                입력창에 메뉴 이름과 가격을 적지 않으면 등록이 되지 않습니다.
               </p>
             </TableCell>
 
