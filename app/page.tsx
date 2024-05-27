@@ -77,8 +77,6 @@ export default function Home() {
     const imageFiles = await compress(data.images);
     const formData = new FormData();
 
-    console.log('[data.caf]', data.cafe);
-
     formData.append(
       'request',
       JSON.stringify({
@@ -112,14 +110,7 @@ export default function Home() {
         .json();
 
       toast({
-        title: '값이 등록되었습니다.',
-        description: (
-          <pre className="mt-2 w-full rounded-md bg-slate-950 p-4">
-            <code className="text-white">
-              {JSON.stringify(response, null, 2)}
-            </code>
-          </pre>
-        ),
+        title: '카페가 등록되었습니다.',
       });
 
       form.reset();
