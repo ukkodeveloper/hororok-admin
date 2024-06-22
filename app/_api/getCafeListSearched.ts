@@ -20,17 +20,34 @@ export interface Cafe {
   mapy: string;
 }
 
+export interface KaKaoCafeList {
+  documents: KaKaoCafe[];
+}
+
+export interface KaKaoCafe {
+  address_name: string;
+  category_group_code: string;
+  category_group_name: string;
+  category_name: string;
+  distance: string;
+  id: string;
+  phone: string;
+  place_name: string;
+  place_url: string;
+  road_address_name: string;
+  x: string;
+  y: string;
+}
+
 export const getCafeListSearched = (keyword: string) => {
   return ky
-    .get('/api/naver/search', {
+    .get('/api/kakao/search', {
       searchParams: {
         query: keyword,
-        display: 5,
       },
       headers: {
-        'X-Naver-Client-Id': process.env['NEXT_PUBLIC_X_NAVER_ID'],
-        'X-Naver-Client-Secret': process.env['NEXT_PUBLIC_X_NAVER_SECRET'],
+        Authorization: process.env['NEXT_PUBLIC_X_KAKAO'],
       },
     })
-    .then(response => response.json<CafeListResponse>());
+    .then(response => response.json<KaKaoCafeList>());
 };
