@@ -68,7 +68,8 @@ export default function CafeInputField() {
                       value={label}
                       key={label}
                       onSelect={() => {
-                        const meta = getCafeMeta(value);
+                        const cafeName = value.split(' | ')[0];
+                        const meta = getCafeMeta(cafeName);
                         if (!meta) return;
 
                         form.setValue('cafe', value);

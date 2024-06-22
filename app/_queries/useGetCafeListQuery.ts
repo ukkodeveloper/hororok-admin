@@ -24,8 +24,8 @@ export const useGetCafeListQuery = () => {
   });
   // 검색 옵션들
   const cafeOptions = query.data?.map(cafe => ({
-    label: `${cafe.title} ( ${cafe.road_address_name} )`,
-    value: cafe.title,
+    label: `${cafe.title} | ${cafe.road_address_name}`,
+    value: `${cafe.title} | ${cafe.road_address_name}`,
   }));
 
   const getCafeMeta = (cafeName: string) => {
