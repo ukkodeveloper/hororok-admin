@@ -24,6 +24,8 @@ import { useFormContext } from 'react-hook-form';
 import { useGetCafeListQuery } from '@/app/_queries/useGetCafeListQuery';
 import type { CafeSchema } from '@/app/page';
 import { useState } from 'react';
+import { getIsCafeExist } from '@/app/_api/getIsCafeExist';
+import { toast } from '@/components/ui/use-toast';
 
 export default function CafeInputField() {
   const form = useFormContext<CafeSchema>();
@@ -67,10 +69,23 @@ export default function CafeInputField() {
                     <CommandItem
                       value={label}
                       key={label}
-                      onSelect={() => {
+                      onSelect={async () => {
                         const cafeName = value.split(' | ')[0];
                         const meta = getCafeMeta(cafeName);
                         if (!meta) return;
+
+                        const response = await getIsCafeExist({
+                          mapx: meta.coordinates[0],
+                          mapy: meta.coordinates[1],
+                        });
+
+                        const data = await response.json<{ exist: boolean }>();
+
+                        if (data.exist) {
+                          toast({
+                            title: '카페가 이미 존재합니다.',
+                          });
+                        }
 
                         form.setValue('cafe', value);
                         form.setValue('coordinates', meta.coordinates);
