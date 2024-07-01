@@ -80,7 +80,7 @@ export default function Home() {
     formData.append(
       'request',
       JSON.stringify({
-        name: data.cafe,
+        name: data.cafe.split(' | ')[0],
         roadAddress: data.address,
         mapx: Number(data.coordinates[0]),
         mapy: Number(data.coordinates[1]),
